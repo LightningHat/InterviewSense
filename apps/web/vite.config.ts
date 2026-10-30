@@ -15,7 +15,12 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['@mlc-ai/web-llm'],
+    },
+  },
   optimizeDeps: {
-    exclude: ['@ricky0123/vad-web', 'onnxruntime-web'],
+    exclude: ['@ricky0123/vad-web', 'onnxruntime-web', '@mlc-ai/web-llm'],
   },
 });
