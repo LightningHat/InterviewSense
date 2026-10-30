@@ -51,3 +51,4 @@ export function checkKeywords(text: string, keywords?: string[]): boolean {
   }
   return false;
 }
+

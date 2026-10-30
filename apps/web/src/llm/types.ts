@@ -11,3 +11,4 @@ export interface LLMAdapter {
   followup(req: FollowupRequest, signal?: AbortSignal): Promise<FollowupResponse>;
   summarize(req: SummaryRequest, signal?: AbortSignal): Promise<string>;
 }
+

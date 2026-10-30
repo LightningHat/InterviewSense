@@ -21,3 +21,4 @@ export function createLLMAdapter(profile: RuntimeProfile): LLMAdapter {
       return new HttpLLMAdapter();
   }
 }
+

@@ -134,3 +134,4 @@ export class STTManager {
     this.pendingRequests.clear();
   }
 }
+

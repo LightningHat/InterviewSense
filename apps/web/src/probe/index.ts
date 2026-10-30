@@ -117,3 +117,4 @@ export function fallbackProfile(current: RuntimeProfile): RuntimeProfile {
       return 'thin';
   }
 }
+

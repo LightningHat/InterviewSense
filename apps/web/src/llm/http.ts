@@ -85,3 +85,4 @@ export class HttpLLMAdapter implements LLMAdapter {
     return res.summary || req.rollingSummary;
   }
 }
+

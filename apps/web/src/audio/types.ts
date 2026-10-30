@@ -26,3 +26,4 @@ export type STTWorkerOutgoingMessage =
   | { type: 'progress'; progress: number; file: string }
   | { type: 'result'; id: string; text: string; wordCount: number; fillerRate: number; wpm: number; durationMs: number }
   | { type: 'error'; id?: string; message: string };
+

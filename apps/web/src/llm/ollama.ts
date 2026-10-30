@@ -90,3 +90,4 @@ export class OllamaLLMAdapter implements LLMAdapter {
     return data?.message?.content?.trim() || req.rollingSummary;
   }
 }
+

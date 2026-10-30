@@ -132,3 +132,4 @@ test('decideRoute advances on repeated off-topic and marks skipped', () => {
   assert.equal(decision.action, 'advance');
   assert.equal(decision.nextQuestionId, 'q2-weak');
 });
+

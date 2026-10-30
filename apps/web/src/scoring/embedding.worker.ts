@@ -69,3 +69,4 @@ self.onmessage = async (event: MessageEvent<EmbeddingWorkerIncoming>) => {
     }
   }
 };
+

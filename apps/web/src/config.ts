@@ -70,3 +70,4 @@ export const CONFIG = {
     bankGenerateTimeoutMs: 12000,
   },
 } as const;
+

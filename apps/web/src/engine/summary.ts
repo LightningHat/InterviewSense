@@ -31,3 +31,4 @@ export function compressSummaryLocally(summary: string): string {
   const tail = lines.slice(-3);
   return `${head}\n... (${lines.length - 4} earlier turns omitted) ...\n${tail.join('\n')}`;
 }
+

@@ -73,3 +73,4 @@ test('extractor builds schema-valid Profile with taxonomy skills and projects', 
   assert.ok(profile.projects[0].title.length <= 200);
   assert.ok(profile.projects[0].summary.length <= 200);
 });
+

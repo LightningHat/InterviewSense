@@ -49,3 +49,4 @@ export function clampField(text: string, maxLen: number = 200): string {
   if (trimmed.length <= maxLen) return trimmed;
   return trimmed.slice(0, maxLen - 3) + '...';
 }
+

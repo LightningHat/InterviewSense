@@ -76,3 +76,4 @@ self.onmessage = async (event: MessageEvent<STTWorkerIncomingMessage>) => {
     }
   }
 };
+

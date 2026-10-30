@@ -140,3 +140,4 @@ export const ReportView: React.FC<ReportViewProps> = ({
     </div>
   );
 };
+

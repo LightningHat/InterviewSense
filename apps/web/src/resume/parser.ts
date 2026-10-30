@@ -83,3 +83,4 @@ export async function parseResumeFile(file: File): Promise<ParseResult> {
     };
   }
 }
+

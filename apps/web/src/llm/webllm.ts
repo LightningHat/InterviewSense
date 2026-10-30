@@ -17,8 +17,10 @@ export class WebLLMAdapter implements LLMAdapter {
 
     this.loadPromise = (async () => {
       try {
-        // Dynamic import so it doesn't block bundle or fail on environments without WebGPU
-        const webllm = await import('@mlc-ai/web-llm' as any).catch(() => null);
+        // Prevent Vite from trying to statically resolve '@mlc-ai/web-llm' during dev import-analysis
+        const moduleName = '@mlc-ai/web-llm';
+        /* @vite-ignore */
+        const webllm = await import(/* @vite-ignore */ moduleName).catch(() => null);
         if (!webllm || !webllm.CreateMLCEngine) {
           console.warn('WebLLM is not installed or available in this environment');
           return false;

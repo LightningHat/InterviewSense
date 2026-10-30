@@ -100,3 +100,4 @@ test('Golden: Off-topic answer detected correctly', () => {
   assert.equal(analysis.offTopic, true);
   assert.equal(analysis.covered.length, 0);
 });
+
