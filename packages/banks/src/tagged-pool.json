@@ -1,0 +1,904 @@
+[
+  {
+    "id": "pool-emb-01",
+    "domain": "embedded",
+    "level": "intern",
+    "skills": ["c", "embedded-c", "bitwise"],
+    "topic": "c-programming",
+    "difficulty": 1,
+    "text": "How do you check if a specific bit is set in a C integer variable?",
+    "concepts": [
+      { "id": "c1", "text": "Bitwise AND operation with a bitmask", "weight": 2, "keywords": ["and", "&", "mask"] },
+      { "id": "c2", "text": "Bit shifting operator (1 << n) to create the mask", "weight": 2, "keywords": ["shift", "<<", "bitmask"] }
+    ],
+    "staticFollowups": { "c1": "What bitwise operator do you use with the mask?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-02",
+    "domain": "embedded",
+    "level": "intern",
+    "skills": ["c", "pointers", "memory"],
+    "topic": "c-programming",
+    "difficulty": 2,
+    "text": "What is the difference between a pointer to const data and a const pointer in C?",
+    "concepts": [
+      { "id": "c1", "text": "Pointer to const cannot modify the pointed value", "weight": 2, "keywords": ["const int*", "value", "read-only", "cannot modify"] },
+      { "id": "c2", "text": "Const pointer cannot be reassigned to point elsewhere", "weight": 2, "keywords": ["int* const", "address", "reassign", "immutable pointer"] }
+    ],
+    "staticFollowups": { "c1": "Can you change what address a const pointer points to?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-03",
+    "domain": "embedded",
+    "level": "junior",
+    "skills": ["c", "embedded-c", "hardware"],
+    "topic": "c-programming",
+    "difficulty": 2,
+    "text": "Why is the volatile keyword required when reading hardware status registers?",
+    "concepts": [
+      { "id": "c1", "text": "Prevents compiler register-caching optimizations", "weight": 2, "keywords": ["optimize", "cache", "compiler", "register"] },
+      { "id": "c2", "text": "Hardware modifies the memory location asynchronously", "weight": 2, "keywords": ["asynchronous", "hardware", "peripheral", "status"] }
+    ],
+    "staticFollowups": { "c1": "How might an optimizing compiler break a polling loop without volatile?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-04",
+    "domain": "embedded",
+    "level": "junior",
+    "skills": ["i2c", "protocols", "hardware"],
+    "topic": "protocols",
+    "difficulty": 2,
+    "text": "Why do the SDA and SCL lines on an I2C bus need pull-up resistors?",
+    "concepts": [
+      { "id": "c1", "text": "Pins are open-drain and can only sink current to ground", "weight": 2, "keywords": ["open-drain", "open drain", "sink", "ground"] },
+      { "id": "c2", "text": "Resistor passively pulls the line high when released", "weight": 2, "keywords": ["passive", "pull high", "high", "vcc", "resistor"] }
+    ],
+    "staticFollowups": { "c1": "What happens electrically if no device drives the I2C bus low?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-05",
+    "domain": "embedded",
+    "level": "junior",
+    "skills": ["spi", "protocols"],
+    "topic": "protocols",
+    "difficulty": 2,
+    "text": "Explain the role of the Chip Select line in SPI communication.",
+    "concepts": [
+      { "id": "c1", "text": "Enables individual slave peripheral for communication", "weight": 2, "keywords": ["slave", "enable", "select", "activate"] },
+      { "id": "c2", "text": "Active-low signal allowing multiple slaves on shared MISO/MOSI bus", "weight": 2, "keywords": ["active-low", "low", "shared", "bus"] }
+    ],
+    "staticFollowups": { "c1": "Is the Chip Select line typically active-high or active-low?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-06",
+    "domain": "embedded",
+    "level": "junior",
+    "skills": ["uart", "protocols"],
+    "topic": "protocols",
+    "difficulty": 2,
+    "text": "What causes framing errors in UART serial reception?",
+    "concepts": [
+      { "id": "c1", "text": "Baud rate mismatch or timing drift between receiver and transmitter", "weight": 2, "keywords": ["baud", "baud rate", "drift", "timing", "clock"] },
+      { "id": "c2", "text": "Missing or unexpected stop bit at the expected frame boundary", "weight": 2, "keywords": ["stop bit", "frame", "boundary", "sample"] }
+    ],
+    "staticFollowups": { "c1": "How does clock drift cause a UART framing error?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-07",
+    "domain": "embedded",
+    "level": "junior",
+    "skills": ["interrupts", "firmware"],
+    "topic": "architecture",
+    "difficulty": 2,
+    "text": "Why should you never call printf or blocking sleep functions inside an ISR?",
+    "concepts": [
+      { "id": "c1", "text": "Blocking delays starve other interrupts and violate real-time deadlines", "weight": 2, "keywords": ["starve", "deadline", "latency", "block", "real-time"] },
+      { "id": "c2", "text": "Printf is reentrant-unsafe and may acquire mutexes leading to deadlock", "weight": 2, "keywords": ["reentrant", "mutex", "deadlock", "stack"] }
+    ],
+    "staticFollowups": { "c1": "What can happen to high-priority system events if an ISR blocks?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-08",
+    "domain": "embedded",
+    "level": "mid",
+    "skills": ["rtos", "concurrency"],
+    "topic": "rtos",
+    "difficulty": 3,
+    "text": "How does priority inversion occur in an RTOS and how is it resolved?",
+    "concepts": [
+      { "id": "c1", "text": "Low task holds lock needed by high task, while medium task preempts low task", "weight": 2, "keywords": ["medium", "preempt", "low", "high", "lock"] },
+      { "id": "c2", "text": "Priority inheritance temporarily boosts low task to high priority", "weight": 2, "keywords": ["priority inheritance", "boost", "elevate", "temporary"] }
+    ],
+    "staticFollowups": { "c1": "Which task's execution directly delays the high-priority task during inversion?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-09",
+    "domain": "embedded",
+    "level": "mid",
+    "skills": ["rtos", "firmware"],
+    "topic": "rtos",
+    "difficulty": 3,
+    "text": "What is the difference between a counting semaphore and a binary semaphore?",
+    "concepts": [
+      { "id": "c1", "text": "Counting semaphore tracks multiple available resources or permits", "weight": 2, "keywords": ["counting", "permits", "count", "multiple", "resource"] },
+      { "id": "c2", "text": "Binary semaphore has only 0 or 1 states, commonly used for single event signaling", "weight": 2, "keywords": ["binary", "0 or 1", "event", "signal", "flag"] }
+    ],
+    "staticFollowups": { "c1": "When would you use a counting semaphore instead of a binary one?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-10",
+    "domain": "embedded",
+    "level": "mid",
+    "skills": ["dma", "architecture"],
+    "topic": "architecture",
+    "difficulty": 3,
+    "text": "What is cache coherency, and why is it a problem when using DMA with cached memory?",
+    "concepts": [
+      { "id": "c1", "text": "DMA writes directly to RAM, leaving stale dirty data in CPU cache", "weight": 2, "keywords": ["cache", "stale", "dirty", "ram", "cpu"] },
+      { "id": "c2", "text": "Requires cache invalidate before DMA read and cache flush before DMA write", "weight": 2, "keywords": ["flush", "clean", "invalidate", "barrier", "coherent"] }
+    ],
+    "staticFollowups": { "c1": "What happens if CPU reads from cached RAM while DMA writes to main memory?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-11",
+    "domain": "embedded",
+    "level": "mid",
+    "skills": ["timers", "pwm", "hardware"],
+    "topic": "peripherals",
+    "difficulty": 2,
+    "text": "How do you calculate PWM frequency given clock frequency, prescaler, and period?",
+    "concepts": [
+      { "id": "c1", "text": "Timer clock equals input clock divided by (prescaler + 1)", "weight": 2, "keywords": ["clock", "divide", "prescaler", "timer frequency"] },
+      { "id": "c2", "text": "PWM frequency equals timer clock divided by (period/ARR + 1)", "weight": 2, "keywords": ["period", "arr", "divide", "counter", "frequency"] }
+    ],
+    "staticFollowups": { "c1": "How does increasing the prescaler affect the PWM output frequency?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-12",
+    "domain": "embedded",
+    "level": "intern",
+    "skills": ["gpio", "hardware"],
+    "topic": "peripherals",
+    "difficulty": 1,
+    "text": "What happens when an unused microcontroller input pin is left floating?",
+    "concepts": [
+      { "id": "c1", "text": "CMOS input toggles unpredictably due to electrostatic noise and increases current consumption", "weight": 2, "keywords": ["floating", "noise", "current", "power", "toggle"] },
+      { "id": "c2", "text": "Prevented by enabling internal pull-up, pull-down, or setting pin as analog/output", "weight": 2, "keywords": ["pull-up", "pull-down", "analog", "termination"] }
+    ],
+    "staticFollowups": { "c1": "Why does a floating CMOS gate consume excess power?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-13",
+    "domain": "embedded",
+    "level": "junior",
+    "skills": ["adc", "hardware"],
+    "topic": "peripherals",
+    "difficulty": 2,
+    "text": "What is the function of a sample-and-hold circuit in an ADC?",
+    "concepts": [
+      { "id": "c1", "text": "Charges a holding capacitor to capture analog voltage at a specific instant", "weight": 2, "keywords": ["capacitor", "charge", "instant", "capture"] },
+      { "id": "c2", "text": "Maintains a constant stable voltage during SAR conversion cycle", "weight": 2, "keywords": ["constant", "stable", "conversion", "sar"] }
+    ],
+    "staticFollowups": { "c1": "Why must the input voltage remain stable during successive approximation conversion?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-14",
+    "domain": "embedded",
+    "level": "senior",
+    "skills": ["memory", "architecture", "c"],
+    "topic": "architecture",
+    "difficulty": 4,
+    "text": "Explain memory protection units (MPU) and how they safeguard embedded operating systems.",
+    "concepts": [
+      { "id": "c1", "text": "Enforces hardware memory region access permissions (read, write, execute)", "weight": 2, "keywords": ["region", "permission", "read", "write", "execute", "privileged"] },
+      { "id": "c2", "text": "Triggers MemManage fault on stack overflow or unauthorized task access", "weight": 2, "keywords": ["fault", "stack overflow", "exception", "isolation"] }
+    ],
+    "staticFollowups": { "c1": "How does an MPU detect a task stack overflow?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-15",
+    "domain": "embedded",
+    "level": "senior",
+    "skills": ["power-management", "hardware"],
+    "topic": "architecture",
+    "difficulty": 4,
+    "text": "How do low-power sleep modes work in microcontrollers and how are they woken up?",
+    "concepts": [
+      { "id": "c1", "text": "Gating CPU clocks and powering down internal analog blocks and PLLs", "weight": 2, "keywords": ["clock gating", "power down", "pll", "sleep", "stop", "standby"] },
+      { "id": "c2", "text": "Woken up by external pin interrupts, RTC alarm, or low-power timer", "weight": 2, "keywords": ["rtc", "interrupt", "wake", "timer", "gpio"] }
+    ],
+    "staticFollowups": { "c1": "Which peripherals typically stay powered in the lowest standby power mode?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-16",
+    "domain": "embedded",
+    "level": "junior",
+    "skills": ["c", "memory"],
+    "topic": "c-programming",
+    "difficulty": 2,
+    "text": "What is struct padding and how does structure member alignment affect RAM in embedded C?",
+    "concepts": [
+      { "id": "c1", "text": "Compiler adds padding bytes to align members to CPU word boundaries", "weight": 2, "keywords": ["padding", "alignment", "word boundary", "bytes"] },
+      { "id": "c2", "text": "Reordering struct members from largest to smallest minimizes wasted memory", "weight": 2, "keywords": ["reorder", "pack", "waste", "size"] }
+    ],
+    "staticFollowups": { "c1": "Why does a 32-bit CPU prefer 4-byte aligned memory accesses?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-17",
+    "domain": "embedded",
+    "level": "intern",
+    "skills": ["debugging", "hardware"],
+    "topic": "debugging",
+    "difficulty": 1,
+    "text": "What is SWD/JTAG and how does hardware in-circuit debugging work?",
+    "concepts": [
+      { "id": "c1", "text": "Hardware debug interface allowing PC debugger to control CPU execution", "weight": 2, "keywords": ["debugger", "interface", "jtag", "swd", "gdb"] },
+      { "id": "c2", "text": "Supports hardware breakpoints, flash programming, and register/memory inspection", "weight": 2, "keywords": ["breakpoint", "flash", "registers", "stepping"] }
+    ],
+    "staticFollowups": { "c1": "How does SWD differ from JTAG in terms of pin count?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-18",
+    "domain": "embedded",
+    "level": "senior",
+    "skills": ["bootloader", "firmware"],
+    "topic": "firmware",
+    "difficulty": 4,
+    "text": "How does a secure dual-bank firmware update (FOTA) bootloader ensure failsafe recovery?",
+    "concepts": [
+      { "id": "c1", "text": "A/B dual flash partition: writes update to inactive bank while active bank runs", "weight": 2, "keywords": ["a/b", "dual bank", "inactive", "partition"] },
+      { "id": "c2", "text": "Verifies cryptographic signature/checksum and auto-rollbacks if watchdog fires before confirmation", "weight": 2, "keywords": ["signature", "rollback", "checksum", "watchdog", "verification"] }
+    ],
+    "staticFollowups": { "c1": "How does the bootloader know to roll back to the previous firmware version?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-19",
+    "domain": "embedded",
+    "level": "mid",
+    "skills": ["can-bus", "protocols"],
+    "topic": "protocols",
+    "difficulty": 3,
+    "text": "Explain CAN bus arbitration and why message collision does not corrupt data.",
+    "concepts": [
+      { "id": "c1", "text": "Wired-AND differential signaling where dominant bit (0) overwrites recessive bit (1)", "weight": 2, "keywords": ["dominant", "recessive", "0", "1", "differential"] },
+      { "id": "c2", "text": "Nodes monitor the bus while transmitting; node with lower ID wins arbitration smoothly", "weight": 2, "keywords": ["arbitration", "id", "priority", "collisionless"] }
+    ],
+    "staticFollowups": { "c1": "Which CAN identifier has higher priority: a lower number or a higher number?" },
+    "next": {}
+  },
+  {
+    "id": "pool-emb-20",
+    "domain": "embedded",
+    "level": "junior",
+    "skills": ["watchdog", "safety"],
+    "topic": "architecture",
+    "difficulty": 2,
+    "text": "What is a windowed watchdog timer and how does it improve system safety over a normal watchdog?",
+    "concepts": [
+      { "id": "c1", "text": "Resets the CPU if refreshed too late OR refreshed too early", "weight": 2, "keywords": ["too early", "too late", "window", "early", "time"] },
+      { "id": "c2", "text": "Catches runaway code or loops executing faster than designed", "weight": 2, "keywords": ["runaway", "loop", "timing", "frequency"] }
+    ],
+    "staticFollowups": { "c1": "What happens in a windowed watchdog if firmware kicks it prematurely?" },
+    "next": {}
+  },
+
+  {
+    "id": "pool-web-01",
+    "domain": "web",
+    "level": "intern",
+    "skills": ["javascript", "web"],
+    "topic": "javascript",
+    "difficulty": 1,
+    "text": "Explain the difference between let, const, and var in modern JavaScript.",
+    "concepts": [
+      { "id": "c1", "text": "let and const are block-scoped, while var is function-scoped", "weight": 2, "keywords": ["block", "function", "scope", "hoist"] },
+      { "id": "c2", "text": "const prevents variable reassignment while let allows it", "weight": 2, "keywords": ["reassign", "mutation", "reassignment", "immutable"] }
+    ],
+    "staticFollowups": { "c1": "Does const prevent mutating the properties of an object?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-02",
+    "domain": "web",
+    "level": "intern",
+    "skills": ["html", "css", "web"],
+    "topic": "frontend",
+    "difficulty": 1,
+    "text": "What is the CSS box model and what is the effect of box-sizing: border-box?",
+    "concepts": [
+      { "id": "c1", "text": "Comprises content, padding, border, and margin areas", "weight": 2, "keywords": ["content", "padding", "border", "margin"] },
+      { "id": "c2", "text": "border-box includes padding and border within the declared width and height", "weight": 2, "keywords": ["border-box", "width", "include", "size"] }
+    ],
+    "staticFollowups": { "c1": "How does border-box simplify responsive layout calculations?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-03",
+    "domain": "web",
+    "level": "junior",
+    "skills": ["javascript", "async"],
+    "topic": "javascript",
+    "difficulty": 2,
+    "text": "How does the JavaScript event loop handle the microtask queue versus the macrotask queue?",
+    "concepts": [
+      { "id": "c1", "text": "Microtasks (Promises, queueMicrotask) run to completion before the next macrotask", "weight": 2, "keywords": ["microtask", "promise", "next", "drain", "priority"] },
+      { "id": "c2", "text": "Macrotasks include setTimeout, setInterval, and I/O callbacks", "weight": 2, "keywords": ["macrotask", "settimeout", "timer", "io"] }
+    ],
+    "staticFollowups": { "c1": "Does Promise.then() execute before or after a queued setTimeout callback?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-04",
+    "domain": "web",
+    "level": "junior",
+    "skills": ["react", "frontend"],
+    "topic": "react",
+    "difficulty": 2,
+    "text": "What is the purpose of useEffect dependency array and what happens if it is omitted?",
+    "concepts": [
+      { "id": "c1", "text": "Tells React to only re-run the effect when listed dependencies change identity", "weight": 2, "keywords": ["dependencies", "change", "re-run", "shallow"] },
+      { "id": "c2", "text": "Omitting the array causes the effect to run after every single render", "weight": 2, "keywords": ["every render", "omit", "infinite loop"] }
+    ],
+    "staticFollowups": { "c1": "What happens if an empty array [] is passed as the dependency array?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-05",
+    "domain": "web",
+    "level": "junior",
+    "skills": ["react", "frontend"],
+    "topic": "react",
+    "difficulty": 2,
+    "text": "Why must you provide a unique 'key' prop when rendering lists in React?",
+    "concepts": [
+      { "id": "c1", "text": "Helps React's reconciliation diffing identify which items changed, moved, or deleted", "weight": 2, "keywords": ["reconciliation", "diff", "identity", "track"] },
+      { "id": "c2", "text": "Using array index as key causes state corruption on reordering or insertion", "weight": 2, "keywords": ["index", "reorder", "state", "bug", "re-render"] }
+    ],
+    "staticFollowups": { "c1": "Why is using list item index as a key problematic when filtering a list?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-06",
+    "domain": "web",
+    "level": "junior",
+    "skills": ["typescript", "web"],
+    "topic": "typescript",
+    "difficulty": 2,
+    "text": "What is the difference between an interface and a type alias in TypeScript?",
+    "concepts": [
+      { "id": "c1", "text": "Interfaces support declaration merging and class implementation", "weight": 2, "keywords": ["merge", "declaration merging", "extend", "class"] },
+      { "id": "c2", "text": "Type aliases can represent unions, primitives, and mapped types directly", "weight": 2, "keywords": ["union", "primitive", "intersection", "alias"] }
+    ],
+    "staticFollowups": { "c1": "Which TypeScript construct allows merging multiple declarations with the same name?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-07",
+    "domain": "web",
+    "level": "mid",
+    "skills": ["react", "performance"],
+    "topic": "react",
+    "difficulty": 3,
+    "text": "When should you use useMemo and useCallback in React, and what is their cost?",
+    "concepts": [
+      { "id": "c1", "text": "Prevent unnecessary child re-renders or expensive calculations by memoizing references", "weight": 2, "keywords": ["memoize", "reference", "render", "expensive"] },
+      { "id": "c2", "text": "Adds memory and dependency comparison overhead; premature use adds complexity", "weight": 2, "keywords": ["overhead", "cost", "premature", "dependency check"] }
+    ],
+    "staticFollowups": { "c1": "Does wrapping a simple scalar value in useMemo provide a performance benefit?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-08",
+    "domain": "web",
+    "level": "mid",
+    "skills": ["web-apis", "workers"],
+    "topic": "frontend",
+    "difficulty": 3,
+    "text": "How do Web Workers communicate with the main thread and what data can they share?",
+    "concepts": [
+      { "id": "c1", "text": "Message passing via postMessage and onmessage event listeners", "weight": 2, "keywords": ["postmessage", "onmessage", "message"] },
+      { "id": "c2", "text": "Data is copied by structured cloning, or transferred using Transferable objects (ArrayBuffer)", "weight": 2, "keywords": ["structured clone", "transferable", "arraybuffer", "copy"] }
+    ],
+    "staticFollowups": { "c1": "How do Transferable objects avoid copy overhead when sending large audio buffers?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-09",
+    "domain": "web",
+    "level": "mid",
+    "skills": ["http", "security", "web"],
+    "topic": "security",
+    "difficulty": 3,
+    "text": "What is Cross-Origin Resource Sharing (CORS) and what triggers a preflight OPTIONS request?",
+    "concepts": [
+      { "id": "c1", "text": "Browser security mechanism controlling cross-origin HTTP requests via headers", "weight": 2, "keywords": ["origin", "header", "browser", "security"] },
+      { "id": "c2", "text": "Non-simple methods (PUT, DELETE) or custom request headers trigger OPTIONS preflight", "weight": 2, "keywords": ["preflight", "options", "custom header", "put", "delete"] }
+    ],
+    "staticFollowups": { "c1": "Does CORS protect the client browser or the target server API?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-10",
+    "domain": "web",
+    "level": "mid",
+    "skills": ["security", "web"],
+    "topic": "security",
+    "difficulty": 3,
+    "text": "Explain Cross-Site Scripting (XSS) and how modern frontend frameworks prevent it.",
+    "concepts": [
+      { "id": "c1", "text": "Injection of malicious client-side scripts executed in victim user context", "weight": 2, "keywords": ["inject", "script", "malicious", "cookie", "token"] },
+      { "id": "c2", "text": "Frameworks automatically escape text content unless dangerouslySetInnerHTML is explicitly used", "weight": 2, "keywords": ["escape", "sanitize", "dangerouslysetinnerhtml", "context"] }
+    ],
+    "staticFollowups": { "c1": "How does automatic string escaping in JSX protect against reflected XSS?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-11",
+    "domain": "web",
+    "level": "mid",
+    "skills": ["performance", "web"],
+    "topic": "performance",
+    "difficulty": 3,
+    "text": "What are Core Web Vitals (LCP, INP, CLS) and how do you optimize Largest Contentful Paint?",
+    "concepts": [
+      { "id": "c1", "text": "Measures loading performance (LCP), interactivity (INP), and visual stability (CLS)", "weight": 2, "keywords": ["lcp", "inp", "cls", "loading", "interactivity", "stability"] },
+      { "id": "c2", "text": "Optimize LCP by preloading hero assets, CDN caching, and removing render-blocking resources", "weight": 2, "keywords": ["preload", "cdn", "render-blocking", "image", "hero"] }
+    ],
+    "staticFollowups": { "c1": "What causes poor Cumulative Layout Shift on web pages?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-12",
+    "domain": "web",
+    "level": "junior",
+    "skills": ["indexeddb", "storage"],
+    "topic": "frontend",
+    "difficulty": 2,
+    "text": "How does IndexedDB compare to localStorage for client-side storage?",
+    "concepts": [
+      { "id": "c1", "text": "IndexedDB is asynchronous, transactional, and stores structured objects and blobs", "weight": 2, "keywords": ["asynchronous", "transaction", "blob", "object", "index"] },
+      { "id": "c2", "text": "localStorage is synchronous, blocks the UI thread, and is limited to ~5MB strings", "weight": 2, "keywords": ["synchronous", "blocking", "5mb", "string"] }
+    ],
+    "staticFollowups": { "c1": "Why is storing large binary datasets in localStorage a bad idea?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-13",
+    "domain": "web",
+    "level": "senior",
+    "skills": ["architecture", "react", "state"],
+    "topic": "architecture",
+    "difficulty": 4,
+    "text": "How do you choose between local state, context, and external state stores (Zustand/Redux)?",
+    "concepts": [
+      { "id": "c1", "text": "Local state for isolated UI; Context for low-frequency global settings like theme", "weight": 2, "keywords": ["local", "context", "theme", "frequency"] },
+      { "id": "c2", "text": "External stores for high-frequency updates to prevent broad subtree re-renders", "weight": 2, "keywords": ["selector", "re-render", "zustand", "high frequency"] }
+    ],
+    "staticFollowups": { "c1": "Why does React Context cause excessive re-renders when state updates frequently?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-14",
+    "domain": "web",
+    "level": "senior",
+    "skills": ["ssr", "nextjs", "web"],
+    "topic": "architecture",
+    "difficulty": 4,
+    "text": "Explain Server-Side Rendering (SSR) versus Static Site Generation (SSG) and Hydration.",
+    "concepts": [
+      { "id": "c1", "text": "SSG pre-builds HTML at compile time; SSR renders HTML on each incoming request", "weight": 2, "keywords": ["build time", "request time", "ssg", "ssr", "html"] },
+      { "id": "c2", "text": "Hydration attaches JavaScript event listeners to the pre-rendered HTML DOM", "weight": 2, "keywords": ["hydration", "event listeners", "dom", "attach"] }
+    ],
+    "staticFollowups": { "c1": "What is hydration mismatch in SSR frameworks?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-15",
+    "domain": "web",
+    "level": "mid",
+    "skills": ["web-audio", "audio"],
+    "topic": "frontend",
+    "difficulty": 3,
+    "text": "How does an AudioWorklet process real-time microphone audio without causing glitches?",
+    "concepts": [
+      { "id": "c1", "text": "Runs in a dedicated audio rendering thread independent of the main UI thread", "weight": 2, "keywords": ["audio thread", "dedicated", "real-time", "latency"] },
+      { "id": "c2", "text": "Processes audio in small fixed sample blocks (e.g. 128 frames) without blocking", "weight": 2, "keywords": ["sample", "frame", "non-blocking", "buffer"] }
+    ],
+    "staticFollowups": { "c1": "Why did AudioWorklet replace ScriptProcessorNode in Web Audio standards?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-16",
+    "domain": "web",
+    "level": "junior",
+    "skills": ["typescript", "generics"],
+    "topic": "typescript",
+    "difficulty": 2,
+    "text": "What are TypeScript Generics and why are they preferable to using 'any'?",
+    "concepts": [
+      { "id": "c1", "text": "Allow functions and classes to work with dynamic types while retaining compile-time type safety", "weight": 2, "keywords": ["type safety", "parameter", "compile time", "reuse"] },
+      { "id": "c2", "text": "Using 'any' turns off type checking and allows runtime bugs to escape unnoticed", "weight": 2, "keywords": ["any", "unsound", "check", "bug"] }
+    ],
+    "staticFollowups": { "c1": "How does a generic function preserve the return type relationship with its input arguments?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-17",
+    "domain": "web",
+    "level": "senior",
+    "skills": ["webgpu", "performance"],
+    "topic": "frontend",
+    "difficulty": 4,
+    "text": "What advantages does WebGPU provide over WebGL for in-browser machine learning inference?",
+    "concepts": [
+      { "id": "c1", "text": "Direct support for compute shaders (WGSL) designed for general matrix operations", "weight": 2, "keywords": ["compute shader", "wgsl", "matrix", "tensor", "compute"] },
+      { "id": "c2", "text": "Lower CPU driver overhead and direct buffer memory access matching modern Vulkan/Metal APIs", "weight": 2, "keywords": ["overhead", "vulkan", "metal", "buffer", "direct"] }
+    ],
+    "staticFollowups": { "c1": "Why are compute shaders more suitable for neural network weights than fragment shaders?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-18",
+    "domain": "web",
+    "level": "intern",
+    "skills": ["git", "version-control"],
+    "topic": "tooling",
+    "difficulty": 1,
+    "text": "What is the difference between git merge and git rebase?",
+    "concepts": [
+      { "id": "c1", "text": "git merge creates a new merge commit preserving chronological history", "weight": 2, "keywords": ["merge commit", "preserve", "chronological", "history"] },
+      { "id": "c2", "text": "git rebase reapplies commits onto a new base branch creating a linear history", "weight": 2, "keywords": ["rebase", "linear", "reapply", "rewrite"] }
+    ],
+    "staticFollowups": { "c1": "Why should you avoid rebasing commits that have already been pushed to a public shared branch?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-19",
+    "domain": "web",
+    "level": "junior",
+    "skills": ["testing", "frontend"],
+    "topic": "testing",
+    "difficulty": 2,
+    "text": "What is the difference between unit testing, integration testing, and end-to-end (E2E) testing?",
+    "concepts": [
+      { "id": "c1", "text": "Unit tests isolate individual functions; integration tests check interacting components", "weight": 2, "keywords": ["unit", "isolated", "component", "integration"] },
+      { "id": "c2", "text": "E2E tests automate the full system from user interface to backend services", "weight": 2, "keywords": ["e2e", "browser", "playwright", "user flow"] }
+    ],
+    "staticFollowups": { "c1": "Why are E2E tests typically slower and more brittle than unit tests?" },
+    "next": {}
+  },
+  {
+    "id": "pool-web-20",
+    "domain": "web",
+    "level": "mid",
+    "skills": ["pwa", "service-workers"],
+    "topic": "frontend",
+    "difficulty": 3,
+    "text": "How does a Service Worker enable offline capabilities in Progressive Web Apps?",
+    "concepts": [
+      { "id": "c1", "text": "Acts as a client-side network proxy intercepting outgoing fetch requests", "weight": 2, "keywords": ["proxy", "intercept", "fetch", "network"] },
+      { "id": "c2", "text": "Serves assets and API responses directly from Cache Storage when offline", "weight": 2, "keywords": ["cache storage", "offline", "cache", "fallback"] }
+    ],
+    "staticFollowups": { "c1": "What caching strategy would you use for static code bundles versus live API requests?" },
+    "next": {}
+  },
+
+  {
+    "id": "pool-sys-01",
+    "domain": "backend",
+    "level": "intern",
+    "skills": ["sql", "databases"],
+    "topic": "databases",
+    "difficulty": 1,
+    "text": "What is the difference between an INNER JOIN and a LEFT JOIN in SQL?",
+    "concepts": [
+      { "id": "c1", "text": "INNER JOIN returns only matching rows present in both tables", "weight": 2, "keywords": ["match", "both", "inner"] },
+      { "id": "c2", "text": "LEFT JOIN returns all rows from the left table and NULLs for non-matching right rows", "weight": 2, "keywords": ["all rows", "left", "null", "unmatched"] }
+    ],
+    "staticFollowups": { "c1": "What values appear for right table columns in a LEFT JOIN when no match exists?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-02",
+    "domain": "backend",
+    "level": "intern",
+    "skills": ["rest", "http", "api"],
+    "topic": "apis",
+    "difficulty": 1,
+    "text": "What makes an HTTP method idempotent, and which common HTTP methods are idempotent?",
+    "concepts": [
+      { "id": "c1", "text": "Multiple identical requests produce the same server-side outcome as a single request", "weight": 2, "keywords": ["identical", "same outcome", "side effect"] },
+      { "id": "c2", "text": "GET, PUT, DELETE, and HEAD are idempotent; POST is not", "weight": 2, "keywords": ["get", "put", "delete", "post"] }
+    ],
+    "staticFollowups": { "c1": "Why is HTTP POST considered non-idempotent?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-03",
+    "domain": "backend",
+    "level": "junior",
+    "skills": ["python", "backend"],
+    "topic": "python",
+    "difficulty": 2,
+    "text": "How do Python asyncio coroutines differ from multithreading?",
+    "concepts": [
+      { "id": "c1", "text": "Asyncio is single-threaded cooperative multitasking using an event loop", "weight": 2, "keywords": ["single thread", "cooperative", "event loop", "await"] },
+      { "id": "c2", "text": "Threads are preemptively scheduled by the OS but constrained by the Python GIL for CPU tasks", "weight": 2, "keywords": ["thread", "gil", "preemptive", "lock"] }
+    ],
+    "staticFollowups": { "c1": "What is the Global Interpreter Lock (GIL) in Python?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-04",
+    "domain": "backend",
+    "level": "junior",
+    "skills": ["sql", "databases", "indexing"],
+    "topic": "databases",
+    "difficulty": 2,
+    "text": "How does a B-tree database index speed up queries and what is its write penalty?",
+    "concepts": [
+      { "id": "c1", "text": "Provides logarithmic O(log N) lookup and range scan operations", "weight": 2, "keywords": ["logarithmic", "o(log n)", "lookup", "range", "binary"] },
+      { "id": "c2", "text": "Every INSERT, UPDATE, and DELETE must rebalance and update the index tree", "weight": 2, "keywords": ["insert", "write", "update", "penalty", "overhead"] }
+    ],
+    "staticFollowups": { "c1": "Why does adding many indexes degrade database write throughput?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-05",
+    "domain": "backend",
+    "level": "junior",
+    "skills": ["docker", "devops"],
+    "topic": "infrastructure",
+    "difficulty": 2,
+    "text": "What is the difference between a container and a virtual machine?",
+    "concepts": [
+      { "id": "c1", "text": "Containers share the host OS kernel and isolate processes using cgroups and namespaces", "weight": 2, "keywords": ["share kernel", "namespace", "cgroup", "lightweight"] },
+      { "id": "c2", "text": "VMs run a full guest OS on top of a hardware hypervisor", "weight": 2, "keywords": ["hypervisor", "guest os", "hardware", "vm"] }
+    ],
+    "staticFollowups": { "c1": "Why do containers start up significantly faster than virtual machines?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-06",
+    "domain": "backend",
+    "level": "junior",
+    "skills": ["auth", "security"],
+    "topic": "security",
+    "difficulty": 2,
+    "text": "Explain the structure of a JSON Web Token (JWT) and how a server verifies it.",
+    "concepts": [
+      { "id": "c1", "text": "Composed of header, payload, and signature separated by dots", "weight": 2, "keywords": ["header", "payload", "signature", "three parts"] },
+      { "id": "c2", "text": "Verified using a cryptographic secret key or public key without database lookup", "weight": 2, "keywords": ["verify", "secret", "signature", "stateless"] }
+    ],
+    "staticFollowups": { "c1": "Are JWT payload claims encrypted or simply Base64URL encoded?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-07",
+    "domain": "backend",
+    "level": "mid",
+    "skills": ["caching", "redis", "architecture"],
+    "topic": "architecture",
+    "difficulty": 3,
+    "text": "What are cache-aside, write-through, and write-back caching strategies?",
+    "concepts": [
+      { "id": "c1", "text": "Cache-aside: application reads cache, queries DB on miss, and populates cache", "weight": 2, "keywords": ["cache-aside", "miss", "lazy", "populate"] },
+      { "id": "c2", "text": "Write-through updates DB and cache synchronously; write-back updates DB asynchronously", "weight": 2, "keywords": ["write-through", "write-back", "sync", "async", "dirty"] }
+    ],
+    "staticFollowups": { "c1": "What is the risk of data loss in a write-back cache during a crash?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-08",
+    "domain": "backend",
+    "level": "mid",
+    "skills": ["concurrency", "distributed-systems"],
+    "topic": "concurrency",
+    "difficulty": 3,
+    "text": "What is the difference between optimistic locking and pessimistic locking in database transactions?",
+    "concepts": [
+      { "id": "c1", "text": "Pessimistic locking locks rows upfront (SELECT FOR UPDATE) preventing concurrent access", "weight": 2, "keywords": ["pessimistic", "select for update", "lock", "block"] },
+      { "id": "c2", "text": "Optimistic locking checks version/timestamp at commit time and rolls back on conflict", "weight": 2, "keywords": ["optimistic", "version", "timestamp", "conflict", "rollback"] }
+    ],
+    "staticFollowups": { "c1": "When is optimistic locking preferable over pessimistic locking?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-09",
+    "domain": "backend",
+    "level": "mid",
+    "skills": ["microservices", "architecture"],
+    "topic": "architecture",
+    "difficulty": 3,
+    "text": "What is the circuit breaker pattern in microservice communications?",
+    "concepts": [
+      { "id": "c1", "text": "Monitors downstream failures and trips to open state to prevent cascading system outages", "weight": 2, "keywords": ["circuit breaker", "cascading", "failure", "open"] },
+      { "id": "c2", "text": "Transitions to half-open to test canary requests before closing and resuming normal traffic", "weight": 2, "keywords": ["half-open", "closed", "recovery", "canary"] }
+    ],
+    "staticFollowups": { "c1": "What status does a circuit breaker return immediately while in the open state?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-10",
+    "domain": "backend",
+    "level": "mid",
+    "skills": ["databases", "acid"],
+    "topic": "databases",
+    "difficulty": 3,
+    "text": "Explain ACID transaction properties and what dirty reads are.",
+    "concepts": [
+      { "id": "c1", "text": "Atomicity, Consistency, Isolation, and Durability guarantee reliable database transactions", "weight": 2, "keywords": ["atomicity", "consistency", "isolation", "durability", "acid"] },
+      { "id": "c2", "text": "Dirty read occurs when a query reads uncommitted modifications from another transaction", "weight": 2, "keywords": ["dirty read", "uncommitted", "isolation level", "rollback"] }
+    ],
+    "staticFollowups": { "c1": "Which SQL isolation level prevents dirty reads?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-11",
+    "domain": "backend",
+    "level": "senior",
+    "skills": ["distributed-systems", "cap-theorem"],
+    "topic": "distributed-systems",
+    "difficulty": 4,
+    "text": "Explain the CAP theorem and what tradeoffs a system makes during network partitions.",
+    "concepts": [
+      { "id": "c1", "text": "In the presence of a network partition, a distributed system must choose between consistency and availability", "weight": 2, "keywords": ["partition", "consistency", "availability", "tradeoff"] },
+      { "id": "c2", "text": "CP systems reject or stall writes to preserve strict correctness, while AP systems return potentially stale reads", "weight": 2, "keywords": ["cp", "ap", "stale", "correctness"] }
+    ],
+    "staticFollowups": { "c1": "Why is partition tolerance considered non-negotiable in real-world distributed networks?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-12",
+    "domain": "backend",
+    "level": "senior",
+    "skills": ["messaging", "kafka", "distributed-systems"],
+    "topic": "messaging",
+    "difficulty": 4,
+    "text": "How does an append-only distributed log like Kafka provide ordering and consumer scalability?",
+    "concepts": [
+      { "id": "c1", "text": "Topics are partitioned; strict order is guaranteed only within a single partition", "weight": 2, "keywords": ["partition", "order", "sequence", "offset"] },
+      { "id": "c2", "text": "Consumer groups assign each partition to one consumer worker for parallel processing", "weight": 2, "keywords": ["consumer group", "parallel", "assign", "scale"] }
+    ],
+    "staticFollowups": { "c1": "Can two consumers in the same consumer group read from the same partition concurrently?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-13",
+    "domain": "backend",
+    "level": "junior",
+    "skills": ["security", "passwords"],
+    "topic": "security",
+    "difficulty": 2,
+    "text": "Why should passwords never be hashed with fast algorithms like MD5 or SHA-256?",
+    "concepts": [
+      { "id": "c1", "text": "Fast algorithms allow attackers to test billions of hashes per second using GPUs", "weight": 2, "keywords": ["fast", "gpu", "brute force", "rainbow table"] },
+      { "id": "c2", "text": "Use adaptive, work-factor algorithms with salting like bcrypt, argon2, or PBKDF2", "weight": 2, "keywords": ["bcrypt", "argon2", "salt", "work factor", "slow"] }
+    ],
+    "staticFollowups": { "c1": "What is the purpose of adding a cryptographic salt to a password before hashing?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-14",
+    "domain": "backend",
+    "level": "mid",
+    "skills": ["rate-limiting", "api"],
+    "topic": "apis",
+    "difficulty": 3,
+    "text": "How does the token bucket algorithm for API rate limiting work?",
+    "concepts": [
+      { "id": "c1", "text": "Tokens are added to a bucket at a constant fill rate up to a maximum capacity", "weight": 2, "keywords": ["token", "bucket", "fill rate", "capacity"] },
+      { "id": "c2", "text": "Requests consume tokens; allows burst traffic up to capacity while enforcing average rate", "weight": 2, "keywords": ["burst", "consume", "average", "reject"] }
+    ],
+    "staticFollowups": { "c1": "How does token bucket allow temporary traffic bursts unlike a fixed window limiter?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-15",
+    "domain": "backend",
+    "level": "senior",
+    "skills": ["sharding", "databases"],
+    "topic": "databases",
+    "difficulty": 4,
+    "text": "What challenges arise when sharding a relational database horizontally?",
+    "concepts": [
+      { "id": "c1", "text": "Cross-shard joins, global unique ID generation, and distributed transactions become complex", "weight": 2, "keywords": ["cross-shard join", "distributed transaction", "id generation", "twopc"] },
+      { "id": "c2", "text": "Hotspot shards and data rebalancing when adding new shard nodes", "weight": 2, "keywords": ["hotspot", "rebalance", "shard key", "skew"] }
+    ],
+    "staticFollowups": { "c1": "How does consistent hashing help when adding new nodes to a sharded cluster?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-16",
+    "domain": "backend",
+    "level": "intern",
+    "skills": ["linux", "operating-systems"],
+    "topic": "operating-systems",
+    "difficulty": 1,
+    "text": "What is the difference between a process and a thread in an operating system?",
+    "concepts": [
+      { "id": "c1", "text": "Processes have independent isolated address spaces and resources", "weight": 2, "keywords": ["process", "isolated", "address space", "memory"] },
+      { "id": "c2", "text": "Threads share the same memory space of their parent process and share heap memory", "weight": 2, "keywords": ["thread", "share memory", "heap", "stack"] }
+    ],
+    "staticFollowups": { "c1": "Do threads within the same process have separate stacks?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-17",
+    "domain": "backend",
+    "level": "mid",
+    "skills": ["grpc", "protocols"],
+    "topic": "networking",
+    "difficulty": 3,
+    "text": "What advantages does gRPC over HTTP/2 have compared to traditional JSON over HTTP/1.1?",
+    "concepts": [
+      { "id": "c1", "text": "Binary Protocol Buffers serialization is much smaller and faster to parse than JSON", "weight": 2, "keywords": ["protobuf", "binary", "compact", "fast"] },
+      { "id": "c2", "text": "HTTP/2 multiplexing over a single TCP connection supports bi-directional streaming", "weight": 2, "keywords": ["multiplexing", "http/2", "streaming", "single connection"] }
+    ],
+    "staticFollowups": { "c1": "How does HTTP/2 multiplexing eliminate head-of-line blocking at the application layer?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-18",
+    "domain": "backend",
+    "level": "senior",
+    "skills": ["observability", "devops"],
+    "topic": "observability",
+    "difficulty": 4,
+    "text": "Explain the three pillars of observability: metrics, logs, and distributed traces.",
+    "concepts": [
+      { "id": "c1", "text": "Metrics provide aggregated numeric telemetry; logs provide discrete event records", "weight": 2, "keywords": ["metrics", "numeric", "logs", "events"] },
+      { "id": "c2", "text": "Distributed tracing tracks request lifecycles across multiple services using trace/span IDs", "weight": 2, "keywords": ["trace", "span", "context propagation", "distributed"] }
+    ],
+    "staticFollowups": { "c1": "How does context propagation connect spans across HTTP service boundaries?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-19",
+    "domain": "backend",
+    "level": "junior",
+    "skills": ["sql", "nosql", "databases"],
+    "topic": "databases",
+    "difficulty": 2,
+    "text": "When would you choose a NoSQL document database (e.g. MongoDB) over a relational database?",
+    "concepts": [
+      { "id": "c1", "text": "When schema is highly dynamic, polymorphic, or frequently evolving", "weight": 2, "keywords": ["dynamic schema", "polymorphic", "evolving", "unstructured"] },
+      { "id": "c2", "text": "When data is naturally hierarchical and accessed in aggregate documents without relational joins", "weight": 2, "keywords": ["hierarchical", "document", "aggregate", "denormalized"] }
+    ],
+    "staticFollowups": { "c1": "What is the tradeoff of denormalizing relational data into embedded documents?" },
+    "next": {}
+  },
+  {
+    "id": "pool-sys-20",
+    "domain": "backend",
+    "level": "senior",
+    "skills": ["security", "zero-trust"],
+    "topic": "security",
+    "difficulty": 4,
+    "text": "What is mutual TLS (mTLS) and how does it secure microservice communication?",
+    "concepts": [
+      { "id": "c1", "text": "Both client and server present and cryptographically verify X.509 digital certificates", "weight": 2, "keywords": ["both", "client certificate", "x.509", "authenticate"] },
+      { "id": "c2", "text": "Provides both wire encryption and zero-trust mutual identity authentication", "weight": 2, "keywords": ["zero trust", "encryption", "identity", "mutual"] }
+    ],
+    "staticFollowups": { "c1": "How does mTLS differ from standard one-way HTTPS/TLS?" },
+    "next": {}
+  }
+]

@@ -1,0 +1,288 @@
+{
+  "id": "embedded-v1",
+  "version": 1,
+  "title": "Embedded Systems Intern",
+  "source": "static",
+  "config": {
+    "maxQuestions": 8,
+    "maxFollowupsPerQuestion": 1,
+    "T_cover": 0.55,
+    "T_off": 0.25
+  },
+  "questions": [
+    {
+      "id": "q-i2c",
+      "text": "Explain how I2C works and when you would choose it over SPI.",
+      "topic": "protocols",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-2wire", "text": "Two wires: SDA and SCL, shared synchronous bus", "weight": 2, "keywords": ["sda", "scl", "two wire"] },
+        { "id": "c-addr", "text": "Devices are addressed, supports multiple slaves with unique addresses", "weight": 2, "keywords": ["address", "slave", "master"] },
+        { "id": "c-pullup", "text": "Open-drain lines require pull-up resistors", "weight": 2, "keywords": ["pull-up", "pullup", "resistor", "open drain"] },
+        { "id": "c-tradeoff", "text": "Slower transfer speed than SPI but requires fewer microcontroller pins", "weight": 1, "keywords": ["speed", "pin", "faster", "slower"] }
+      ],
+      "idealAnswer": "I2C is a synchronous, half-duplex serial protocol using two open-drain bidirectional lines: SDA and SCL, both requiring pull-up resistors. Each slave device has a unique address. You would choose I2C over SPI when conserving pins is important or when connecting many peripherals, though SPI is faster and full-duplex.",
+      "staticFollowups": {
+        "c-2wire": "What are the two signal lines called in an I2C bus?",
+        "c-addr": "How does the master identify which slave device to talk to in I2C?",
+        "c-pullup": "Why do the SDA and SCL lines in I2C require pull-up resistors?"
+      },
+      "next": { "strong": "q-dma", "partial": "q-spi", "weak": "q-uart" }
+    },
+    {
+      "id": "q-spi",
+      "text": "Explain how the SPI communication bus works and how slave devices are selected.",
+      "topic": "protocols",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-spi-lines", "text": "Uses MOSI, MISO, SCK/SCLK, and Chip Select / Slave Select lines", "weight": 2, "keywords": ["mosi", "miso", "sclk", "sck", "clock"] },
+        { "id": "c-spi-cs", "text": "Dedicated active-low Chip Select line for each peripheral", "weight": 2, "keywords": ["chip select", "slave select", "cs", "ss", "active low"] },
+        { "id": "c-spi-duplex", "text": "Full-duplex synchronous data transmission with separate data lines", "weight": 1, "keywords": ["full duplex", "simultaneous", "synchronous"] }
+      ],
+      "idealAnswer": "SPI is a four-wire synchronous serial protocol with MOSI, MISO, SCLK, and individual Chip Select (CS) lines for each slave. Data is shifted simultaneously in full duplex. A slave is selected by pulling its dedicated CS line low.",
+      "staticFollowups": {
+        "c-spi-lines": "What are the four signal lines commonly used in SPI?",
+        "c-spi-cs": "How does an SPI master select which slave device to communicate with?"
+      },
+      "next": { "strong": "q-dma", "partial": "q-uart", "weak": "q-gpio" }
+    },
+    {
+      "id": "q-uart",
+      "text": "How does asynchronous serial communication (UART) work without a shared clock signal?",
+      "topic": "protocols",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-baud", "text": "Both devices must be pre-configured with the exact same baud rate", "weight": 2, "keywords": ["baud", "baud rate", "timing", "clock"] },
+        { "id": "c-framing", "text": "Frames use start and stop bits (and optional parity) to synchronize byte boundaries", "weight": 2, "keywords": ["start bit", "stop bit", "frame", "parity", "sync"] },
+        { "id": "c-async", "text": "Asynchronous point-to-point communication over TX and RX wires", "weight": 1, "keywords": ["tx", "rx", "asynchronous"] }
+      ],
+      "idealAnswer": "UART is asynchronous; there is no shared clock. Both devices agree in advance on a baud rate. Synchronization happens on the falling edge of a start bit for every byte frame, followed by data bits, optional parity, and stop bits.",
+      "staticFollowups": {
+        "c-baud": "Without a clock wire, how do sender and receiver agree on when to sample bits in UART?",
+        "c-framing": "What framing bits are added to each data byte in UART to synchronize transmission?"
+      },
+      "next": { "strong": "q-timers", "partial": "q-gpio", "weak": "q-bitwise" }
+    },
+    {
+      "id": "q-dma",
+      "text": "What is Direct Memory Access (DMA), and why is it essential in high-throughput embedded systems?",
+      "topic": "architecture",
+      "difficulty": 3,
+      "concepts": [
+        { "id": "c-dma-bypass", "text": "Transfers data between peripherals and memory without CPU intervention", "weight": 2, "keywords": ["cpu", "offload", "without cpu", "bypass"] },
+        { "id": "c-dma-transfer", "text": "Hardware controller manages memory bus addressing and burst transfers", "weight": 2, "keywords": ["bus", "controller", "ram", "memory", "buffer"] },
+        { "id": "c-dma-throughput", "text": "Frees CPU cycles and drastically reduces interrupt overhead at high data rates", "weight": 1, "keywords": ["throughput", "cycles", "interrupt", "overhead", "latency"] }
+      ],
+      "idealAnswer": "DMA is a hardware feature allowing peripherals to transfer blocks of data directly to/from memory without CPU involvement. It prevents CPU starvation from frequent interrupts during high-throughput tasks like audio buffering or ADC streaming.",
+      "staticFollowups": {
+        "c-dma-bypass": "How does DMA move data into RAM without consuming CPU clock cycles?",
+        "c-dma-transfer": "What component coordinates memory bus access when DMA is operating?"
+      },
+      "next": { "strong": "q-rtos-sync", "partial": "q-interrupts", "weak": "q-timers" }
+    },
+    {
+      "id": "q-interrupts",
+      "text": "Explain the difference between polling and interrupts, and how an Interrupt Service Routine (ISR) should be designed.",
+      "topic": "architecture",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-isr-tradeoff", "text": "Polling wastes CPU cycles in loops whereas interrupts provide immediate event-driven response", "weight": 2, "keywords": ["polling", "waste", "event", "response", "latency"] },
+        { "id": "c-isr-short", "text": "ISRs must be kept as short and fast as possible without blocking calls or delays", "weight": 2, "keywords": ["short", "fast", "non-blocking", "minimal", "delay", "sleep"] },
+        { "id": "c-isr-context", "text": "Hardware saves CPU registers on the stack and switches execution context", "weight": 1, "keywords": ["context", "stack", "registers", "save"] }
+      ],
+      "idealAnswer": "Polling repeatedly checks a status flag in a loop, wasting CPU cycles, while interrupts notify the CPU immediately when an event occurs. An ISR should be minimal: acknowledge the hardware flag, copy essential data or set a notification flag, and exit quickly without delays or blocking.",
+      "staticFollowups": {
+        "c-isr-tradeoff": "Why is interrupt-driven I/O generally more power-efficient than polling?",
+        "c-isr-short": "Why is it dangerous to call delay functions or acquire blocking locks inside an ISR?"
+      },
+      "next": { "strong": "q-rtos-sync", "partial": "q-volatile", "weak": "q-timers" }
+    },
+    {
+      "id": "q-timers",
+      "text": "How do hardware timers and Pulse Width Modulation (PWM) work in a microcontroller?",
+      "topic": "peripherals",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-timer-prescaler", "text": "Clock prescaler divides system frequency to drive a counter register", "weight": 2, "keywords": ["prescaler", "divide", "counter", "frequency", "clock"] },
+        { "id": "c-pwm-duty", "text": "PWM duty cycle represents the fraction of time the signal remains high over a period", "weight": 2, "keywords": ["duty cycle", "period", "high", "low", "percentage"] },
+        { "id": "c-timer-compare", "text": "Output compare registers toggle pin state when counter matches value", "weight": 1, "keywords": ["compare", "match", "register", "toggle"] }
+      ],
+      "idealAnswer": "A hardware timer uses a prescaler to divide the core clock and increments a counter. In PWM mode, an output compare register compares against the counter: the pin stays high until the match, then drops low until period reset, generating a variable duty cycle signal.",
+      "staticFollowups": {
+        "c-timer-prescaler": "What role does a prescaler play in configuring a microcontroller timer?",
+        "c-pwm-duty": "What does the duty cycle of a PWM signal represent?"
+      },
+      "next": { "strong": "q-interrupts", "partial": "q-adc", "weak": "q-gpio" }
+    },
+    {
+      "id": "q-gpio",
+      "text": "What is the difference between push-pull, open-drain, and pull-up/pull-down configurations on GPIO pins?",
+      "topic": "peripherals",
+      "difficulty": 1,
+      "concepts": [
+        { "id": "c-gpio-pushpull", "text": "Push-pull actively drives both high (VCC) and low (GND) with complementary transistors", "weight": 2, "keywords": ["push pull", "active", "vcc", "ground", "drive"] },
+        { "id": "c-gpio-opendrain", "text": "Open-drain only pulls to ground, relying on external pull-up for high level", "weight": 2, "keywords": ["open drain", "pull up", "floating", "ground"] },
+        { "id": "c-gpio-resistors", "text": "Internal pull-up/down resistors prevent floating inputs from picking up electrical noise", "weight": 1, "keywords": ["floating", "noise", "pull-up", "pull-down", "resistor"] }
+      ],
+      "idealAnswer": "Push-pull drives both high and low rails using paired transistors. Open-drain can only sink current to ground, requiring an external pull-up to pull high. Internal pull-up or pull-down resistors prevent floating high-impedance inputs from oscillating due to noise.",
+      "staticFollowups": {
+        "c-gpio-pushpull": "How does a push-pull output differ electrically from an open-drain output?",
+        "c-gpio-opendrain": "Why does an open-drain output need a pull-up resistor to produce a high voltage?"
+      },
+      "next": { "strong": "q-timers", "partial": "q-debounce", "weak": "q-bitwise" }
+    },
+    {
+      "id": "q-debounce",
+      "text": "What causes switch contact bounce, and how can you debounce a digital input in firmware?",
+      "topic": "peripherals",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-debounce-mech", "text": "Mechanical switch contacts physically oscillate rapidly before settling", "weight": 2, "keywords": ["mechanical", "bounce", "oscillation", "chatter", "physical"] },
+        { "id": "c-debounce-soft", "text": "Software debouncing checks state stability over time using timers or state machines", "weight": 2, "keywords": ["timer", "delay", "sampling", "state machine", "debounce"] },
+        { "id": "c-debounce-glitch", "text": "Prevents false multiple triggers or interrupts on a single press", "weight": 1, "keywords": ["false", "glitch", "trigger", "repeat"] }
+      ],
+      "idealAnswer": "Mechanical spring contacts bounce upon closing, generating false rapid transitions. Software debouncing samples the input periodically with a timer and confirms the state remains stable for 10-50 milliseconds before declaring a valid press.",
+      "staticFollowups": {
+        "c-debounce-mech": "What physical phenomenon causes mechanical switch contact bounce?",
+        "c-debounce-soft": "How does a timer-based state machine implement software debouncing?"
+      },
+      "next": { "strong": "q-interrupts", "partial": "q-bitwise", "weak": "q-pointers" }
+    },
+    {
+      "id": "q-volatile",
+      "text": "In C, why and when must you use the 'volatile' keyword in embedded systems programming?",
+      "topic": "c-programming",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-volatile-opt", "text": "Tells compiler not to optimize away or cache memory reads in CPU registers", "weight": 2, "keywords": ["optimize", "compiler", "cache", "register", "read"] },
+        { "id": "c-volatile-hw", "text": "Required for memory-mapped I/O hardware peripheral registers", "weight": 2, "keywords": ["memory mapped", "register", "hardware", "peripheral", "io"] },
+        { "id": "c-volatile-isr", "text": "Required for variables modified asynchronously inside an ISR or another thread", "weight": 1, "keywords": ["isr", "interrupt", "shared", "thread"] }
+      ],
+      "idealAnswer": "The volatile qualifier tells the compiler that a variable's value can change unexpectedly outside of the current program flow. It prevents the optimizer from caching the value in a register. It is mandatory for memory-mapped peripheral registers and variables shared between main code and ISRs.",
+      "staticFollowups": {
+        "c-volatile-opt": "What happens if a compiler optimizes a loop checking a non-volatile flag modified in an ISR?",
+        "c-volatile-hw": "Why must pointers to microcontroller hardware registers be qualified as volatile?"
+      },
+      "next": { "strong": "q-rtos-sync", "partial": "q-memory", "weak": "q-pointers" }
+    },
+    {
+      "id": "q-rtos-sync",
+      "text": "In an RTOS, what is the fundamental difference between a mutex and a binary semaphore?",
+      "topic": "rtos",
+      "difficulty": 3,
+      "concepts": [
+        { "id": "c-rtos-ownership", "text": "A mutex has an ownership concept: only the task that locked it may unlock it", "weight": 2, "keywords": ["ownership", "lock", "unlock", "owner", "release"] },
+        { "id": "c-rtos-signaling", "text": "A semaphore is a signaling mechanism: one task or ISR signals, another waits", "weight": 2, "keywords": ["signal", "sync", "isr", "wait", "notify"] },
+        { "id": "c-rtos-inversion", "text": "Mutexes often support priority inheritance to mitigate priority inversion", "weight": 1, "keywords": ["priority inheritance", "inversion", "ceiling"] }
+      ],
+      "idealAnswer": "A mutex provides mutual exclusion with ownership: the task that locks it must unlock it, and it can implement priority inheritance. A binary semaphore is a signaling flag: an ISR or task can signal (give) it, and a different task can wait (take) it, with no concept of ownership.",
+      "staticFollowups": {
+        "c-rtos-ownership": "Can an ISR release a mutex that was acquired by an application task?",
+        "c-rtos-signaling": "When would you choose a binary semaphore over a mutex in embedded firmware?"
+      },
+      "next": { "strong": "q-rtos-deadlock", "partial": "q-memory", "weak": "q-volatile" }
+    },
+    {
+      "id": "q-rtos-deadlock",
+      "text": "What is priority inversion in an RTOS, and how does priority inheritance solve it?",
+      "topic": "rtos",
+      "difficulty": 3,
+      "concepts": [
+        { "id": "c-prio-inversion", "text": "A medium priority task preempts a low task holding a lock needed by a high task", "weight": 2, "keywords": ["priority inversion", "medium", "low", "high", "starvation"] },
+        { "id": "c-prio-inheritance", "text": "Temporarily elevates the low priority task to the high task's priority while holding the lock", "weight": 2, "keywords": ["priority inheritance", "elevate", "boost", "temporary", "release"] },
+        { "id": "c-deadlock-avoid", "text": "Deadlock avoidance requires strict lock ordering and timeout guards", "weight": 1, "keywords": ["deadlock", "ordering", "timeout", "hierarchy"] }
+      ],
+      "idealAnswer": "Priority inversion happens when a low-priority task holds a shared resource needed by a high-priority task, but a medium-priority task preempts the low one, indefinitely delaying the high task. Priority inheritance solves this by temporarily raising the low task to the high priority until it unlocks the resource.",
+      "staticFollowups": {
+        "c-prio-inversion": "How does a medium priority task cause a high priority task to block indefinitely in priority inversion?",
+        "c-prio-inheritance": "What happens to the low-priority task's priority once it releases the shared mutex?"
+      },
+      "next": { "strong": "q-memory", "partial": "q-memory", "weak": "q-memory" }
+    },
+    {
+      "id": "q-memory",
+      "text": "Explain the memory segments in an embedded C program: Flash, RAM, Text, Data, BSS, Stack, and Heap.",
+      "topic": "c-programming",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-mem-bss", "text": "BSS stores uninitialized or zero-initialized globals in RAM, cleared at boot", "weight": 2, "keywords": ["bss", "zero", "uninitialized", "ram", "global"] },
+        { "id": "c-mem-stack-heap", "text": "Stack grows for local variables/frames while heap is for dynamic allocations", "weight": 2, "keywords": ["stack", "heap", "local", "malloc", "frame", "overflow"] },
+        { "id": "c-mem-flash", "text": "Flash/ROM holds executable code (Text segment) and initial values of Data segment", "weight": 1, "keywords": ["flash", "rom", "text", "const", "rodata"] }
+      ],
+      "idealAnswer": "Flash holds the Text (executable instructions) and const data. RAM holds Data (initialized globals copied from Flash at startup), BSS (zero-initialized globals cleared at startup), the Stack (local function variables and return addresses), and Heap (dynamic memory).",
+      "staticFollowups": {
+        "c-mem-bss": "Where in memory are global variables initialized to zero located?",
+        "c-mem-stack-heap": "What is the danger of using dynamic heap allocation (malloc) in safety-critical firmware?"
+      },
+      "next": { "strong": "q-pointers", "partial": "q-pointers", "weak": "q-pointers" }
+    },
+    {
+      "id": "q-pointers",
+      "text": "How do pointer arithmetic and function pointers work in embedded C hardware abstraction layers?",
+      "topic": "c-programming",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-ptr-arith", "text": "Pointer arithmetic scales offsets by the byte size of the underlying data type", "weight": 2, "keywords": ["arithmetic", "scale", "size", "sizeof", "offset", "bytes"] },
+        { "id": "c-ptr-fn", "text": "Function pointers enable callback tables and polymorphic device driver interfaces", "weight": 2, "keywords": ["function pointer", "callback", "vtable", "driver", "hal"] },
+        { "id": "c-ptr-align", "text": "Memory-mapped register access requires strict alignment and type casting", "weight": 1, "keywords": ["alignment", "cast", "uint32_t", "dereference"] }
+      ],
+      "idealAnswer": "Pointer arithmetic scales increments by sizeof(type), so advancing a uint32_t pointer by 1 increments the address by 4 bytes. Function pointers store addresses of executable code and are used to construct driver dispatch tables and asynchronous callback hooks.",
+      "staticFollowups": {
+        "c-ptr-arith": "If you add 2 to a pointer of type uint32_t, by how many bytes does the memory address increase?",
+        "c-ptr-fn": "How are function pointers used to implement callback mechanisms in embedded firmware?"
+      },
+      "next": { "strong": "q-bitwise", "partial": "q-bitwise", "weak": "q-bitwise" }
+    },
+    {
+      "id": "q-bitwise",
+      "text": "How do you set, clear, and toggle specific bits in a 32-bit hardware register in C?",
+      "topic": "c-programming",
+      "difficulty": 1,
+      "concepts": [
+        { "id": "c-bit-set", "text": "Setting bits uses bitwise OR (|) with a shifted mask", "weight": 2, "keywords": ["or", "|", "mask", "shift", "set"] },
+        { "id": "c-bit-clear", "text": "Clearing bits uses bitwise AND (&) with inverted mask (~)", "weight": 2, "keywords": ["and", "&", "not", "~", "invert", "clear"] },
+        { "id": "c-bit-toggle", "text": "Toggling bits uses bitwise XOR (^)", "weight": 1, "keywords": ["xor", "^", "toggle"] }
+      ],
+      "idealAnswer": "To set bit n, use `REG |= (1U << n);`. To clear bit n, use `REG &= ~(1U << n);`. To toggle bit n, use `REG ^= (1U << n);`. To test bit n, evaluate `(REG & (1U << n)) != 0`.",
+      "staticFollowups": {
+        "c-bit-set": "What bitwise operator and expression would you use to set bit 3 of a register?",
+        "c-bit-clear": "Why do you use the bitwise NOT operator when clearing a bit with AND?"
+      },
+      "next": { "strong": "q-adc", "partial": "q-adc", "weak": "q-adc" }
+    },
+    {
+      "id": "q-adc",
+      "text": "How does an Analog-to-Digital Converter (ADC) work, and what do resolution and sampling rate mean?",
+      "topic": "peripherals",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-adc-res", "text": "Resolution in bits defines the number of discrete digital quantization steps", "weight": 2, "keywords": ["resolution", "bits", "quantization", "steps", "lsb", "voltage"] },
+        { "id": "c-adc-nyquist", "text": "Sampling rate must be at least twice the highest signal frequency to prevent aliasing (Nyquist theorem)", "weight": 2, "keywords": ["sampling rate", "nyquist", "frequency", "alias", "twice"] },
+        { "id": "c-adc-ref", "text": "A stable voltage reference (VREF) is essential for measurement accuracy", "weight": 1, "keywords": ["vref", "reference", "analog", "calibration"] }
+      ],
+      "idealAnswer": "An ADC converts continuous analog voltage into discrete digital values (e.g., a 12-bit ADC has 4096 steps relative to VREF). The Nyquist criterion requires sampling at at least twice the maximum signal frequency to prevent aliasing distortion.",
+      "staticFollowups": {
+        "c-adc-res": "For a 10-bit ADC with a 3.3V reference, how many distinct quantization levels exist?",
+        "c-adc-nyquist": "What happens if an ADC samples an analog input below the Nyquist rate?"
+      },
+      "next": { "strong": "q-watchdog", "partial": "q-watchdog", "weak": "q-watchdog" }
+    },
+    {
+      "id": "q-watchdog",
+      "text": "What is a Watchdog Timer (WDT) in a microcontroller, and how is it safely serviced by firmware?",
+      "topic": "architecture",
+      "difficulty": 2,
+      "concepts": [
+        { "id": "c-wdg-reset", "text": "Hardware countdown timer that resets the system if firmware hangs or deadlocks", "weight": 2, "keywords": ["reset", "hang", "deadlock", "timeout", "safety"] },
+        { "id": "c-wdg-service", "text": "Firmware must periodically refresh/kick it only when all critical tasks have completed", "weight": 2, "keywords": ["kick", "feed", "refresh", "service", "main loop"] },
+        { "id": "c-wdg-trap", "text": "Never service the watchdog in an ISR timer interrupt, as ISRs can keep running even if main tasks hang", "weight": 1, "keywords": ["isr", "interrupt", "loop", "trap", "false"] }
+      ],
+      "idealAnswer": "A watchdog timer is an independent hardware counter that triggers a microcontroller reset if it expires. Firmware must periodically refresh ('kick') it in the main loop after verifying healthy execution of all threads. It must never be kicked in an ISR, because interrupts can continue firing while threads are deadlocked.",
+      "staticFollowups": {
+        "c-wdg-reset": "What condition causes the watchdog timer to reset the microcontroller?",
+        "c-wdg-service": "Why is it considered bad practice to refresh a watchdog timer inside a hardware timer ISR?"
+      },
+      "next": {}
+    }
+  ]
+}
