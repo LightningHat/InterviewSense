@@ -93,3 +93,4 @@ async def generate_bank(req: BankGenerateRequest):
         yield json.dumps(second_chunk) + "\n"
 
     return StreamingResponse(stream_bank(), media_type="application/x-ndjson")
+

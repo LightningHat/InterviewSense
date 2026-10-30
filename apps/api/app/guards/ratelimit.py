@@ -21,3 +21,4 @@ def check_rate_limit(client_ip: str) -> bool:
     valid_history.append(now)
     ip_request_history[client_ip] = valid_history
     return True
+

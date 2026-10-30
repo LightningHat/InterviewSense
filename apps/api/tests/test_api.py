@@ -5,6 +5,10 @@ from pathlib import Path
 # Add apps/api to sys.path so app module is discoverable
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+# Force mock provider during automated test suites to avoid consuming external API quota
+import os
+os.environ["LLM_PROVIDER"] = "mock"
+
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app

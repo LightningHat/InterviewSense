@@ -1,7 +1,13 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load from apps/api/.env or root .env
+env_path = Path(__file__).resolve().parents[1] / ".env"
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
+else:
+    load_dotenv()
 
 class Settings:
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "mock")
@@ -22,3 +28,4 @@ class Settings:
     RATE_LIMIT_PER_10MIN: int = int(os.getenv("RATE_LIMIT_PER_10MIN", "30"))
 
 settings = Settings()
+

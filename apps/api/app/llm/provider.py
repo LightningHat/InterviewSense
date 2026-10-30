@@ -14,7 +14,7 @@ async def complete(
     response_format: Optional[str] = "json"
 ) -> Dict[str, Any]:
     """
-    Sends request to LLM provider.
+    Sends request to LLM provider (Google Gemini or OpenAI-compatible).
     Model names are pulled from settings/env according to tier.
     Tokens are logged without logging transcripts.
     """
@@ -25,11 +25,15 @@ async def complete(
     else:
         model_name = settings.MODEL_FOLLOWUP
 
-    # 1. Mock Provider for tests, local offline development, or missing API keys
+    # 1. Mock Provider for offline development or missing API keys
     if settings.LLM_PROVIDER == "mock" or not settings.LLM_API_KEY:
         return _mock_complete(messages, model_tier, max_tokens)
 
-    # 2. OpenAI or compatible provider
+    # 2. Google Gemini Provider
+    if settings.LLM_PROVIDER == "gemini":
+        return await _gemini_complete(messages, model_name, max_tokens, model_tier, response_format)
+
+    # 3. OpenAI or compatible provider
     headers = {
         "Authorization": f"Bearer {settings.LLM_API_KEY}",
         "Content-Type": "application/json"
@@ -50,7 +54,7 @@ async def complete(
         response = await client.post(url, headers=headers, json=payload)
         
         if response.status_code != 200:
-            logger.error(f"Provider returned error status {response.status_code}")
+            logger.error(f"Provider returned error status {response.status_code}: {response.text}")
             raise RuntimeError(f"Provider error: HTTP {response.status_code}")
             
         data = response.json()
@@ -58,7 +62,6 @@ async def complete(
         prompt_tokens = usage.get("prompt_tokens", 0)
         completion_tokens = usage.get("completion_tokens", 0)
         
-        # Log token counts without candidate transcript
         logger.info(f"LLM Call [{model_tier}]: in={prompt_tokens}, out={completion_tokens}")
         record_token_usage(prompt_tokens, completion_tokens)
         
@@ -70,18 +73,98 @@ async def complete(
                 return {"text": content}
         return {"text": content}
 
+async def _gemini_complete(
+    messages: List[Dict[str, str]],
+    model_name: str,
+    max_tokens: int,
+    model_tier: str,
+    response_format: Optional[str]
+) -> Dict[str, Any]:
+    # Extract system instruction and user/model turns
+    system_instruction = ""
+    contents = []
+    
+    for m in messages:
+        if m["role"] == "system":
+            system_instruction += m["content"] + "\n"
+        elif m["role"] == "user":
+            contents.append({"role": "user", "parts": [{"text": m["content"]}]})
+        elif m["role"] == "assistant":
+            contents.append({"role": "model", "parts": [{"text": m["content"]}]})
+
+    generation_config: Dict[str, Any] = {
+        "maxOutputTokens": max_tokens,
+        "temperature": 0.3 if model_tier != "bankgen" else 0.4,
+    }
+    if response_format == "json":
+        generation_config["responseMimeType"] = "application/json"
+
+    payload: Dict[str, Any] = {
+        "contents": contents,
+        "generationConfig": generation_config
+    }
+    if system_instruction.strip():
+        payload["systemInstruction"] = {
+            "parts": [{"text": system_instruction.strip()}]
+        }
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.LLM_API_KEY}"
+
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            response = await client.post(url, json=payload)
+            if response.status_code != 200:
+                logger.warning(f"Gemini API error {response.status_code}, falling back to mock: {response.text}")
+                return _mock_complete(messages, model_tier, max_tokens)
+        except Exception as e:
+            logger.warning(f"Gemini API connection error ({e}), falling back gracefully to mock")
+            return _mock_complete(messages, model_tier, max_tokens)
+
+        data = response.json()
+        usage = data.get("usageMetadata", {})
+        prompt_tokens = usage.get("promptTokenCount", 0)
+        completion_tokens = usage.get("candidatesTokenCount", 0)
+
+        logger.info(f"Gemini Call [{model_tier}]: in={prompt_tokens}, out={completion_tokens}")
+        record_token_usage(prompt_tokens, completion_tokens)
+
+        candidates = data.get("candidates", [])
+        if not candidates or "content" not in candidates[0]:
+            return {}
+
+        parts = candidates[0]["content"].get("parts", [])
+        text_content = parts[0].get("text", "{}") if parts else "{}"
+
+        if response_format == "json":
+            try:
+                parsed = json.loads(text_content)
+                # Normalize key names if Gemini returned {"question": "..."} instead of {"followup": "..."}
+                if "followup" not in parsed and "question" in parsed:
+                    parsed["followup"] = parsed["question"]
+                return parsed
+            except Exception:
+                cleaned = text_content.strip()
+                if cleaned.startswith("```"):
+                    cleaned = cleaned.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+                try:
+                    parsed = json.loads(cleaned)
+                    if "followup" not in parsed and "question" in parsed:
+                        parsed["followup"] = parsed["question"]
+                    return parsed
+                except Exception:
+                    return {"followup": text_content}
+        return {"text": text_content}
+
 def _mock_complete(messages: List[Dict[str, str]], model_tier: str, max_tokens: int) -> Dict[str, Any]:
     """Deterministic mock provider for offline mode and tests."""
     user_msg = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "")
     
-    # Simulate token usage
     in_tokens = len(user_msg) // 4
     out_tokens = 30
     record_token_usage(in_tokens, out_tokens)
     logger.info(f"Mock LLM Call [{model_tier}]: in={in_tokens}, out={out_tokens}")
     
     if model_tier == "bankgen":
-        # Return 3 resume-specific questions with 3-4 concepts each and static followups
         return {
             "questions": [
                 {
@@ -155,5 +238,4 @@ def _mock_complete(messages: List[Dict[str, str]], model_tier: str, max_tokens: 
     if "adjudicate" in user_msg.lower():
         return {"band": "partial", "followup": "Can you specifically clarify the role of the pull-up resistors?"}
         
-    # Standard follow-up
     return {"followup": "Could you elaborate on why pull-up resistors are required on those lines?"}

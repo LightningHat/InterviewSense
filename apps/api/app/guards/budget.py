@@ -43,3 +43,4 @@ def record_token_usage(prompt_tokens: int, completion_tokens: int):
     cost = (prompt_tokens / 1000.0 * COST_PER_1K_IN) + (completion_tokens / 1000.0 * COST_PER_1K_OUT)
     daily_spend_usd += cost
     monthly_spend_usd += cost
+

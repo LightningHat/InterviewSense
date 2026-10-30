@@ -49,3 +49,4 @@ app.include_router(banks.router, prefix="/api", tags=["banks"])
 app.include_router(followup.router, prefix="/api", tags=["followup"])
 app.include_router(report.router, prefix="/api", tags=["report"])
 app.include_router(bank_generate.router, prefix="/api", tags=["bank_generate"])
+

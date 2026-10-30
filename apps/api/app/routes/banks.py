@@ -18,3 +18,4 @@ async def get_bank(bank_id: str):
         data = json.load(f)
         
     return data
+

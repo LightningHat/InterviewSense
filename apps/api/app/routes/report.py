@@ -68,3 +68,4 @@ async def generate_report(req: ReportRequest):
             status_code=502,
             detail={"error": {"code": "provider_error", "message": str(e), "retryable": True}}
         )
+

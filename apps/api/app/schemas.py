@@ -118,3 +118,4 @@ class ErrorDetail(BaseModel):
 
 class ApiErrorResponse(BaseModel):
     error: ErrorDetail
+

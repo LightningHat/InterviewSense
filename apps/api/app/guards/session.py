@@ -66,3 +66,4 @@ def check_and_increment_session_cap(session_id: str, op_type: str) -> bool:
         counts["report"] += 1
         return True
     return True
+
