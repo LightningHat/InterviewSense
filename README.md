@@ -28,36 +28,36 @@ Most AI interview tools stream continuous audio directly to cloud LLMs, resultin
 
 ```mermaid
 flowchart TD
-    subgraph Browser ["Client Browser (Local-First Execution)"]
+    subgraph Browser ["Client Browser - Local-First Execution"]
         direction TB
-        Mic["Microphone Input"] --> VAD["Silero VAD (@ricky0123/vad-web)"]
-        VAD --> STT["Whisper STT Worker (@huggingface/transformers)"]
-        STT --> Transcript["Local Transcript & Metrics (WPM, Fillers)"]
-        Transcript --> Scorer["Local Embeddings Scorer (bge-small-en-v1.5)"]
+        Mic["Microphone Input"] --> VAD["Silero VAD - vad-web"]
+        VAD --> STT["Whisper STT Worker - transformers.js"]
+        STT --> Transcript["Local Transcript and Metrics"]
+        Transcript --> Scorer["Local Embeddings Scorer - bge-small"]
         
-        Resume["Resume (PDF / DOCX)"] --> Parser["Local Parser & PII Anonymizer"]
+        Resume["Resume - PDF or DOCX"] --> Parser["Local Parser and PII Anonymizer"]
         Parser --> Profile["Anonymized Tech Profile"]
         
-        Engine["State Machine & Router (DAG)"]
+        Engine["State Machine and Router DAG"]
         Scorer --> Engine
         Engine --> TTS["Web Speech TTS Adapter with Watchdog"]
-        Engine --> IDB[("IndexedDB (Sessions & Turns)")]
+        Engine --> IDB[("IndexedDB - Sessions and Turns")]
     end
 
-    subgraph Backend ["FastAPI Backend (Minimal Token Microservice)"]
+    subgraph Backend ["FastAPI Backend - Minimal Token Service"]
         direction TB
-        Profile -->|HTTP POST| BankGen["Bank Assembler & Pool Ingestion"]
-        Engine -.->|Optional Tier-1 / Adjudicate (60 tokens)| FollowupGen["Follow-up API"]
-        Engine -.->|Session Completion| ReportGen["Comprehensive Report Generator"]
+        Profile -->|HTTP POST| BankGen["Bank Assembler and Pool Ingestion"]
+        Engine -.->|Tier-1 Follow-up or Adjudicate| FollowupGen["Follow-up API"]
+        Engine -.->|Session Complete| ReportGen["Evaluation Report Generator"]
         
-        FollowupGen --> LLMProvider["LLM Provider (Gemini / OpenAI)"]
+        FollowupGen --> LLMProvider["LLM Provider - Gemini or OpenAI"]
         ReportGen --> LLMProvider
         BankGen --> LLMProvider
         
-        subgraph Guardrail ["Security & Cost Guards"]
-            RateLimit["Rate Limiter (IP-based)"]
-            TokenSpend["Token Budget Tracker ($2/day)"]
-            PayloadGuard["Payload Size Guard (8KB limit)"]
+        subgraph Guardrail ["Security and Cost Guards"]
+            RateLimit["Rate Limiter - IP based"]
+            TokenSpend["Token Budget Tracker - 2 USD per day"]
+            PayloadGuard["Payload Size Guard - 8KB limit"]
         end
     end
 ```
@@ -232,3 +232,4 @@ npm run build
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+
