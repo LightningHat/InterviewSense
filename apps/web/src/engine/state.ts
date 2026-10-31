@@ -63,7 +63,7 @@ export type EngineEvent =
     }
   | { type: 'TRANSCRIPTION_EMPTY_OR_HALLUCINATION' }
   | { type: 'SCORING_SUCCESS'; analysis: AnswerAnalysis }
-  | { type: 'ROUTING_DECIDED'; decision: RouteDecision }
+  | { type: 'ROUTING_DECIDED'; decision: RouteDecision; analysis?: AnswerAnalysis }
   | { type: 'FOLLOWUP_GENERATED'; text: string; route: TurnRoute }
   | { type: 'REPORT_READY'; report: ReportResponse }
   | { type: 'FAIL_TO_STANDARD_BANK'; fallbackBank: QuestionBank }
@@ -261,6 +261,15 @@ export function reduceEngineState(
     case 'ROUTING_DECIDED': {
       const decision = event.decision;
       const turnId = `turn-${Date.now()}-${state.currentTurnIndex}`;
+      const turnAnalysis: AnswerAnalysis = event.analysis || {
+        coverage: 0,
+        covered: [],
+        missing: [],
+        offTopic: decision.band === 'offtopic',
+        wordCount: 0,
+        fillerRate: 0,
+        confidenceHint: 1,
+      };
 
       // Construct Turn record
       const newTurn: Turn = {
@@ -271,15 +280,7 @@ export function reduceEngineState(
         kind: state.currentQuestionKind,
         questionText: state.currentQuestionText,
         transcript: state.liveCaption,
-        analysis: {
-          coverage: 0,
-          covered: [],
-          missing: [],
-          offTopic: decision.band === 'offtopic',
-          wordCount: 0,
-          fillerRate: 0,
-          confidenceHint: 1,
-        }, // will be augmented or stored
+        analysis: turnAnalysis,
         route: decision.route,
         band: decision.band,
         delivery: { wpm: 0, fillerRate: 0, durationMs: 0 },
@@ -313,6 +314,27 @@ export function reduceEngineState(
         return { state: nextState, effects };
       }
 
+      if (decision.action === 'adjudicate') {
+        if (state.currentQuestion) {
+          const nextState: EngineState = {
+            ...state,
+            phase: 'ROUTING',
+            turns: updatedTurns,
+            session: updatedSession,
+            followupsForCurrentQuestion: state.followupsForCurrentQuestion + 1,
+            tier2CallsCount: state.tier2CallsCount + 1,
+            audioState: 'processing',
+          };
+          effects.push({
+            type: 'FETCH_FOLLOWUP',
+            question: state.currentQuestion,
+            analysis: turnAnalysis,
+            missingConceptId: decision.missingConceptId || '',
+          });
+          return { state: nextState, effects };
+        }
+      }
+
       if (decision.action === 'followup') {
         // Needs follow-up question
         if (decision.route === 'tier1' && state.currentQuestion) {
@@ -344,7 +366,7 @@ export function reduceEngineState(
             audioState: 'speaking',
             consecutiveOffTopic: 0,
           };
-          effects.push({ type: 'SPEAK', text: followupText });
+          effects.push({ type: 'SPEAK', text: `Got it. ${followupText}` });
           return { state: nextState, effects };
         }
       }
@@ -360,7 +382,7 @@ export function reduceEngineState(
           turns: updatedTurns,
           session: updatedSession,
         };
-        effects.push({ type: 'SPEAK', text: rephraseText });
+        effects.push({ type: 'SPEAK', text: `Let's refocus on this topic: ${rephraseText}` });
         return { state: nextState, effects };
       }
 
@@ -392,7 +414,19 @@ export function reduceEngineState(
           session: updatedSession,
           audioState: 'speaking',
         };
-        effects.push({ type: 'SPEAK', text: nextQ.text });
+
+        let spokenText = nextQ.text;
+        if (decision.band === 'strong') {
+          spokenText = `Great answer! Next question: ${nextQ.text}`;
+        } else if (decision.band === 'partial') {
+          spokenText = `Good explanation. Let's move to the next question: ${nextQ.text}`;
+        } else if (decision.band === 'weak') {
+          spokenText = `Thanks. Let's move on to the next question: ${nextQ.text}`;
+        } else if (decision.band === 'skipped') {
+          spokenText = `Let's move ahead to the next question: ${nextQ.text}`;
+        }
+
+        effects.push({ type: 'SPEAK', text: spokenText });
         return { state: nextState, effects };
       }
 
@@ -408,7 +442,7 @@ export function reduceEngineState(
         currentTurnIndex: state.currentTurnIndex + 1,
         audioState: 'speaking',
       };
-      effects.push({ type: 'SPEAK', text: event.text });
+      effects.push({ type: 'SPEAK', text: `Got it. ${event.text}` });
       return { state: nextState, effects };
     }
 

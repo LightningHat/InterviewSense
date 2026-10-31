@@ -10,7 +10,7 @@ import { seedEmbeddedBank } from '@interviewsense/banks';
 import { CONFIG } from './config.js';
 import { probeCapabilities, selectRuntimeProfile, fallbackProfile } from './probe/index.js';
 import { STTManager } from './audio/stt.js';
-import { ScorerManager } from './audio/../scoring/scorer.js';
+import { ScorerManager } from './scoring/scorer.js';
 import { TTSAdapter } from './tts/index.js';
 import { VADController } from './audio/vad.js';
 import { requestMicCapture, MicCapture } from './audio/mic.js';
@@ -194,7 +194,7 @@ export const App: React.FC = () => {
             llmAvailable: llmRef.current !== null,
             canUseTier2: currentState.tier2CallsCount < CONFIG.scoring.tier2MaxCallsPerSession,
           });
-          dispatch({ type: 'ROUTING_DECIDED', decision });
+          dispatch({ type: 'ROUTING_DECIDED', decision, analysis: eff.analysis });
           break;
         }
 
@@ -479,6 +479,7 @@ export const App: React.FC = () => {
         liveCaption={engineState.liveCaption}
         standardBankFallbackBanner={engineState.standardBankFallbackBanner}
         typedAnswerMode={engineState.typedAnswerMode}
+        lastTurn={engineState.turns[engineState.turns.length - 1]}
         onEndInterview={() => dispatch({ type: 'END_SESSION_MANUALLY' })}
         onSubmitTypedAnswer={(text) => dispatch({ type: 'SUBMIT_TYPED_ANSWER', text })}
         onToggleTypedMode={() =>

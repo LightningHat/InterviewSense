@@ -26,7 +26,7 @@ async def complete(
         model_name = settings.MODEL_FOLLOWUP
 
     # 1. Mock Provider for offline development or missing API keys
-    if settings.LLM_PROVIDER == "mock" or not settings.LLM_API_KEY:
+    if settings.LLM_PROVIDER == "mock" or not settings.api_keys:
         return _mock_complete(messages, model_tier, max_tokens)
 
     # 2. Google Gemini Provider
@@ -108,52 +108,59 @@ async def _gemini_complete(
             "parts": [{"text": system_instruction.strip()}]
         }
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.LLM_API_KEY}"
+    keys = settings.api_keys
+    if not keys:
+        logger.warning("No Gemini API keys configured, falling back to mock")
+        return _mock_complete(messages, model_tier, max_tokens)
 
     async with httpx.AsyncClient(timeout=10.0) as client:
-        try:
-            response = await client.post(url, json=payload)
-            if response.status_code != 200:
-                logger.warning(f"Gemini API error {response.status_code}, falling back to mock: {response.text}")
-                return _mock_complete(messages, model_tier, max_tokens)
-        except Exception as e:
-            logger.warning(f"Gemini API connection error ({e}), falling back gracefully to mock")
-            return _mock_complete(messages, model_tier, max_tokens)
-
-        data = response.json()
-        usage = data.get("usageMetadata", {})
-        prompt_tokens = usage.get("promptTokenCount", 0)
-        completion_tokens = usage.get("candidatesTokenCount", 0)
-
-        logger.info(f"Gemini Call [{model_tier}]: in={prompt_tokens}, out={completion_tokens}")
-        record_token_usage(prompt_tokens, completion_tokens)
-
-        candidates = data.get("candidates", [])
-        if not candidates or "content" not in candidates[0]:
-            return {}
-
-        parts = candidates[0]["content"].get("parts", [])
-        text_content = parts[0].get("text", "{}") if parts else "{}"
-
-        if response_format == "json":
+        for idx, key in enumerate(keys):
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
             try:
-                parsed = json.loads(text_content)
-                # Normalize key names if Gemini returned {"question": "..."} instead of {"followup": "..."}
-                if "followup" not in parsed and "question" in parsed:
-                    parsed["followup"] = parsed["question"]
-                return parsed
-            except Exception:
-                cleaned = text_content.strip()
-                if cleaned.startswith("```"):
-                    cleaned = cleaned.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
-                try:
-                    parsed = json.loads(cleaned)
-                    if "followup" not in parsed and "question" in parsed:
-                        parsed["followup"] = parsed["question"]
-                    return parsed
-                except Exception:
-                    return {"followup": text_content}
-        return {"text": text_content}
+                response = await client.post(url, json=payload)
+                if response.status_code == 200:
+                    data = response.json()
+                    usage = data.get("usageMetadata", {})
+                    prompt_tokens = usage.get("promptTokenCount", 0)
+                    completion_tokens = usage.get("candidatesTokenCount", 0)
+
+                    logger.info(f"Gemini Call [{model_tier}] (key #{idx+1}): in={prompt_tokens}, out={completion_tokens}")
+                    record_token_usage(prompt_tokens, completion_tokens)
+
+                    candidates = data.get("candidates", [])
+                    if not candidates or "content" not in candidates[0]:
+                        return {}
+
+                    parts = candidates[0]["content"].get("parts", [])
+                    text_content = parts[0].get("text", "{}") if parts else "{}"
+
+                    if response_format == "json":
+                        try:
+                            parsed = json.loads(text_content)
+                            if "followup" not in parsed and "question" in parsed:
+                                parsed["followup"] = parsed["question"]
+                            return parsed
+                        except Exception:
+                            cleaned = text_content.strip()
+                            if cleaned.startswith("```"):
+                                cleaned = cleaned.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+                            try:
+                                parsed = json.loads(cleaned)
+                                if "followup" not in parsed and "question" in parsed:
+                                    parsed["followup"] = parsed["question"]
+                                return parsed
+                            except Exception:
+                                return {"followup": text_content}
+                    return {"text": text_content}
+                else:
+                    logger.warning(
+                        f"Gemini API key #{idx+1} ({key[:8]}...) returned status {response.status_code}, trying next key: {response.text[:180]}"
+                    )
+            except Exception as e:
+                logger.warning(f"Gemini API key #{idx+1} ({key[:8]}...) connection error: {e}, trying next key")
+
+    logger.warning("All Gemini API keys exhausted or returned errors, falling back gracefully to mock")
+    return _mock_complete(messages, model_tier, max_tokens)
 
 def _mock_complete(messages: List[Dict[str, str]], model_tier: str, max_tokens: int) -> Dict[str, Any]:
     """Deterministic mock provider for offline mode and tests."""

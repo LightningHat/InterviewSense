@@ -104,3 +104,4 @@ export function validateBank(bank: unknown): ValidationResult {
     errors,
   };
 }
+

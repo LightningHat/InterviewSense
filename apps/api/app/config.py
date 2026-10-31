@@ -12,9 +12,27 @@ else:
 class Settings:
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "mock")
     LLM_API_KEY: str = os.getenv("LLM_API_KEY", "")
+    LLM_FALLBACK_API_KEYS: str = os.getenv("LLM_FALLBACK_API_KEYS", "")
     MODEL_FOLLOWUP: str = os.getenv("MODEL_FOLLOWUP", "gpt-4o-mini")
     MODEL_REPORT: str = os.getenv("MODEL_REPORT", "gpt-4o")
     MODEL_BANKGEN: str = os.getenv("MODEL_BANKGEN", "gpt-4o-mini")
+
+    @property
+    def api_keys(self) -> list[str]:
+        keys: list[str] = []
+        # Support comma-delimited keys in LLM_API_KEY
+        if self.LLM_API_KEY:
+            for k in self.LLM_API_KEY.split(","):
+                k = k.strip()
+                if k and k not in keys:
+                    keys.append(k)
+        # Support comma-delimited fallback keys
+        if self.LLM_FALLBACK_API_KEYS:
+            for k in self.LLM_FALLBACK_API_KEYS.split(","):
+                k = k.strip()
+                if k and k not in keys:
+                    keys.append(k)
+        return keys
     
     SESSION_SECRET: str = os.getenv("SESSION_SECRET", "interviewsense-secret-key-32chars-min!!")
     ALLOWED_ORIGIN: str = os.getenv("ALLOWED_ORIGIN", "http://localhost:5173")

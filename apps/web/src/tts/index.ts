@@ -95,22 +95,40 @@ export class TTSAdapter {
           utterance.voice = preferredVoice;
         }
 
+        let hasEnded = false;
+        const finishSentence = () => {
+          if (hasEnded) return;
+          hasEnded = true;
+          clearTimeout(safetyTimer);
+          this.currentSentenceIndex++;
+          speakNext();
+        };
+
+        // Safety watchdog: prevent Chrome Web Speech API from hanging indefinitely
+        const safetyTimeoutMs = Math.max(3000, sentence.length * 90);
+        const safetyTimer = setTimeout(() => {
+          finishSentence();
+        }, safetyTimeoutMs);
+
         utterance.onstart = () => {
           options.onSentenceStart?.(sentence, this.currentSentenceIndex);
         };
 
         utterance.onend = () => {
-          this.currentSentenceIndex++;
-          speakNext();
+          finishSentence();
         };
 
         utterance.onerror = (e) => {
           console.warn('TTS utterance error:', e);
-          this.currentSentenceIndex++;
-          speakNext();
+          finishSentence();
         };
 
         this.activeUtterance = utterance;
+        try {
+          window.speechSynthesis.resume();
+        } catch {
+          // ignore
+        }
         window.speechSynthesis.speak(utterance);
       };
 

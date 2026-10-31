@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Mic, MicOff, Volume2, Loader, AlertTriangle, Send } from 'lucide-react';
+import { Mic, MicOff, Volume2, Loader, AlertTriangle, Send, CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react';
 import { AudioPipelineStatus } from '../audio/types.js';
+import { Turn } from '@interviewsense/schemas';
 
 interface InterviewViewProps {
   questionText: string;
@@ -9,6 +10,7 @@ interface InterviewViewProps {
   liveCaption: string;
   standardBankFallbackBanner: boolean;
   typedAnswerMode: boolean;
+  lastTurn?: Turn;
   onEndInterview: () => void;
   onSubmitTypedAnswer: (text: string) => void;
   onToggleTypedMode: () => void;
@@ -21,6 +23,7 @@ export const InterviewView: React.FC<InterviewViewProps> = ({
   liveCaption,
   standardBankFallbackBanner,
   typedAnswerMode,
+  lastTurn,
   onEndInterview,
   onSubmitTypedAnswer,
   onToggleTypedMode,
@@ -118,6 +121,85 @@ export const InterviewView: React.FC<InterviewViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Previous Answer Feedback Card */}
+      {lastTurn && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.85)',
+            border: '1px solid #334155',
+            borderRadius: '14px',
+            padding: '16px 20px',
+            marginBottom: '16px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Previous Answer Feedback
+              </span>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  backgroundColor:
+                    lastTurn.band === 'strong'
+                      ? 'rgba(34, 197, 94, 0.15)'
+                      : lastTurn.band === 'partial'
+                      ? 'rgba(234, 179, 8, 0.15)'
+                      : 'rgba(248, 113, 113, 0.15)',
+                  color:
+                    lastTurn.band === 'strong'
+                      ? '#4ade80'
+                      : lastTurn.band === 'partial'
+                      ? '#facc15'
+                      : '#f87171',
+                }}
+              >
+                {lastTurn.band.toUpperCase()}
+              </span>
+            </div>
+            {lastTurn.delivery?.wpm ? (
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                {Math.round(lastTurn.delivery.wpm)} WPM
+              </span>
+            ) : null}
+          </div>
+
+          {/* Feedback details */}
+          <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '6px' }}>
+            {lastTurn.band === 'strong' && 'Great response! You covered the core technical concepts well.'}
+            {lastTurn.band === 'partial' && 'Good points mentioned. The interviewer is digging deeper into details:'}
+            {lastTurn.band === 'weak' && 'Covered limited concepts. Moving to the next question:'}
+            {lastTurn.band === 'offtopic' && 'Response did not directly address the question. Refocusing:'}
+          </div>
+
+          {/* Covered concepts chips */}
+          {lastTurn.analysis?.covered && lastTurn.analysis.covered.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginTop: '6px' }}>
+              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Recognized:</span>
+              {lastTurn.analysis.covered.map((concept, idx) => (
+                <span
+                  key={idx}
+                  style={{
+                    fontSize: '0.75rem',
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    color: '#86efac',
+                    padding: '2px 8px',
+                    borderRadius: '6px',
+                  }}
+                >
+                  ✓ {concept}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Main Center Area: Large Question Text */}
       <div style={{ margin: 'auto 0', textAlign: 'center', padding: '24px 0' }}>
